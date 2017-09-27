@@ -1,50 +1,144 @@
-#!/usr/bin/env python
-#title           :pyheader.py
-#description     :This will create a header for a python script.
-#author          :Gabriel Ionescu
-#date            :2017/09/21
-#notes           :only the part for project euler
-#python_version  :3.6  
-#==============================================================================
+#!/usr/bin/env py
+# title           :pyheader.py
+# description     :This will create a header for a python script.
+# author          :Gabriel Ionescu
+# date            :2017/09/21
+# version         :1.1.2
+# notes           :
+# python_version  :3.6
+# ==============================================================================
 
 # Import the modules needed to run the script.
 from os.path import exists
 from time import strftime
 import os
+import platform
 
-title = input("Enter number of the problem: ")
-number = title
-# Add .py to the end of the script.
-title = 'problem' + title + '.py'
 
-# Check to see if the file exists to not overwrite it.
-if exists(title):
-    print("\nA script with this name already exists.")
-    exit(1)
+def clear_screen(system):
+    """Clear the screen (windows or linux)"""
+    
+    if system == 'windows':
+        os.system('cls')
+    elif system == 'linux':
+        os.system('clear')
 
-descrpt = 'Problem ' + number + ' (https://projecteuler.net/)'
-div = '======================================='
 
-# Create a file that can be written to.
-filename = open(title, 'w')
+def check_title():
+    """Ask for a title name and check if is available"""
 
-# Set the date automatically.
-date = strftime("%Y/%m/%d")
+    title = input('Enter a title for your script: ')
+    desc = title
 
-# Write the data to the file. 
-filename.write('#!/usr/bin/python')
-filename.write('\n#title\t\t\t:' + title)
-filename.write('\n#description\t\t:' + descrpt)
-filename.write('\n#author\t\t\t:Gabriel Ionescu')
-filename.write('\n#date\t\t\t:' + date)
-filename.write('\n#notes\t\t\t:')
-filename.write('\n#python_version\t\t:3.6')
-filename.write('\n#' + div * 2 + '\n')
-filename.write('\n')
-filename.write('\n')
+    # Convert title to a proper filename.
+    title = title.lower()
+    title = title.replace(' ', '_')
+    title = title + '.py'
 
-# Close the file after writing to it.
-filename.close()
+    # Check to see if the file exists.
+    if exists(title):
+        print('\nA script with this name already exists.')
+        print('1. Try another name')
+        print('2. Exit')
+        again = input()
+        
+        if again == '1':
+            clear_screen(system)
+            title = check_title()
+        else:
+            raise SystemExit
+    return title, desc
 
-# Clear the screen. This line of code will not work on Windows.
-os.system("cls") 
+
+def main():
+    """"""
+    
+    # Collect the data.
+    descrpt = 'Project Euler - ' + desc + ' (https://projecteuler.net/)'
+    name = 'Gabriel Ionescu'
+    date = strftime('%Y/%m/%d')
+    ver = '1.0'
+    python_ver = platform.python_version()
+    div = '===================================='
+
+    # Create a file
+    filename = open(title, 'w')
+
+    # Write the data to the file. 
+    filename.write('#!/usr/bin/python')
+    filename.write('\n# title          :' + title)
+    filename.write('\n# description    :' + descrpt)
+    filename.write('\n# author         :' + name)
+    filename.write('\n# date           :' + date)
+    filename.write('\n# version        :' + ver)
+    filename.write('\n# notes          :')
+    filename.write('\n# python_version :' + python_ver)
+    filename.write('\n# ' + div * 2 + '\n')
+    filename.write('\n')
+    filename.write('\n')
+
+    # Close the file after writing to it.
+    filename.close()
+
+
+def select_editor():
+    """Open the file with either the IDLE (windows) or Vim editor."""
+
+    if system == 'windows':        
+        path = os.getcwd()
+        clear_screen(system)
+        while True:
+            print('Please select your prefered editor:\n')
+            print('1. IDLE')
+            print('2. Notepad++')
+            print('3. PyCharm')
+            print('4. Atom')
+            print('0. exit')
+            option = input()
+            if option == '1':
+                os.system(r'c:\Python36-32\Lib\idlelib\idle '
+                          + path + '\\' + title)
+                exit()
+            elif option == '2':
+                os.system('START notepad++ '
+                          + path + '\\' + title)
+                exit()
+            elif option == '3':
+                os.system(r'"C:\Program Files\JetBrains\PyCharm Community Edition 2017.2.1\bin\pycharm64.exe" '
+                          + path + '\\' + title)
+                exit()
+            elif option == '4':
+                os.system(r'C:\Users\iones\AppData\Local\atom\atom.exe '
+                          + path + '\\' + title)
+                exit()
+            elif option == '0':
+                exit()
+    elif system ==  'linux':
+        clear_screen(system)
+        while True:
+            print('Please select your prefered editor:\n')
+            print('1. vim')
+            print('2. gedit')
+            print('3. nano')
+            print('0. exit')
+            option = input()
+            if option == '1':
+                os.system('vim +12 ' + title)
+                exit()
+            elif option == '2':
+                os.system('gedit +12 ' + title)
+                exit()
+            elif option == '3':
+                os.system('nano +12 ' + title)
+                exit()
+            elif option == '0':
+                exit()
+    return select_editor()
+
+
+if __name__ == "__main__":
+    system = platform.system().lower()
+    clear_screen(system)
+    title, desc = check_title()
+    main()
+    select_editor()
